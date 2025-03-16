@@ -1,40 +1,64 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector('#create-task-form');
-  const descriptionInput = document.querySelector('#new-task-description');
-  // Create a priority dropdown in your HTML if you choose to use this
-  const prioritySelect = document.querySelector('#priority');
-  const taskList = document.querySelector('#tasks');
+  const form = document.querySelector("#create-task-form");
+  const taskList = document.querySelector("#tasks");
+  let tasks = [];
 
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    
-    const taskText = descriptionInput.value;
-    const priority = prioritySelect ? prioritySelect.value : 'normal';
+  form.addEventListener("submit", function (event) {
+      event.preventDefault();
 
-    // Create a new list item for each of the tasks task
-    const li = document.createElement('li');
-    li.textContent = taskText;
+      const taskInput = document.querySelector("#new-task-description").value;
+      const priority = document.querySelector("#priority").value;
 
-    // Optional No. 1: Change text color based on priority
-    if (priority === 'high') {
-      li.style.color = 'red';
-    } else if (priority === 'medium') {
-      li.style.color = 'orange';
-    } else if (priority === 'low') {
-      li.style.color = 'green';
-    }
+      if (taskInput.trim() !== "") {
+          tasks.push({ text: taskInput, priority });
+          renderTasks();
+      }
 
-    // Create a delete button for removing things
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = '❌';
-    deleteBtn.style.marginLeft = '10px';
-    deleteBtn.addEventListener('click', () => li.remove());
-
-    li.appendChild(deleteBtn);
-    taskList.appendChild(li);
-
-    // Empty the input field
-    descriptionInput.value = '';
+      form.reset();
   });
+
+  function renderTasks() {
+      taskList.innerHTML = "";
+
+      // Sort tasks by priority
+      tasks.sort((a, b) => {
+          const priorities = { high: 1, medium: 2, low: 3 };
+          return priorities[a.priority] - priorities[b.priority];
+      });
+
+      tasks.forEach((task, index) => {
+          const newTask = document.createElement("li");
+          newTask.textContent = task.text;
+
+          if (task.priority === "high") newTask.style.color = "red";
+          if (task.priority === "medium") newTask.style.color = "orange";
+          if (task.priority === "low") newTask.style.color = "green";
+
+          // Delete button
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "❌";
+          deleteBtn.style.marginLeft = "10px";
+          deleteBtn.addEventListener("click", () => {
+              tasks.splice(index, 1);
+              renderTasks();
+          });
+
+          // Edit button
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "✏️";
+          editBtn.style.marginLeft = "10px";
+          editBtn.addEventListener("click", () => {
+              const newText = prompt("Edit your task:", task.text);
+              if (newText) {
+                  task.text = newText;
+                  renderTasks();
+              }
+          });
+
+          newTask.appendChild(editBtn);
+          newTask.appendChild(deleteBtn);
+          taskList.appendChild(newTask);
+      });
+  }
 });
