@@ -1,6 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Select the form and the input field
+
   const form = document.querySelector('#create-task-form');
   const taskInput = document.querySelector('#new-task-description');
   const taskList = document.querySelector('#tasks'); // The list where tasks will be displayed
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const li = document.createElement('li');
       li.textContent = taskText;
 
-      // Add delete button
+      // Add the delete button
       const deleteBtn = document.createElement('button');
       deleteBtn.textContent = " ❌ ";
       deleteBtn.style.marginLeft = "10px";
